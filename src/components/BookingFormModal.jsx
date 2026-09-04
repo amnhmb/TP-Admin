@@ -242,7 +242,7 @@ export default function BookingFormModal({ onClose, bookingToEdit, onSaveSuccess
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-                  <input type="text" required value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="e.g. 62812345678" className="w-full border border-gray-300 rounded-lg p-2 focus:ring-forest focus:border-forest outline-none transition-colors" />
+                  <input type="text" required value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="e.g. 60123456789" className="w-full border border-gray-300 rounded-lg p-2 focus:ring-forest focus:border-forest outline-none transition-colors" />
                 </div>
               </div>
 
