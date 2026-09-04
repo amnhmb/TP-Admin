@@ -17,7 +17,7 @@ export default function Login() {
     if (error) {
       setError(error.message);
     } else {
-      navigate('/');
+      navigate('/', { replace: true });
     }
     setLoading(false);
   };

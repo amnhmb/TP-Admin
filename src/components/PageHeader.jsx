@@ -1,13 +1,31 @@
 import { useState, useRef, useEffect } from 'react';
-import { UserCircle, Download, Upload, LogOut } from 'lucide-react';
+import { UserCircle, Download, Upload, LogOut, Smartphone } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { onInstallChange, canInstall, isIos, isStandalone, triggerInstall } from '../pwaInstall';
 
 function AccountMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
+  const [installable, setInstallable] = useState(canInstall());
   const menuRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => onInstallChange(() => setInstallable(canInstall())), []);
+
+  // Show the install entry on Chrome/Android (when the prompt is available) and
+  // on iOS (manual add), but never once already running as an installed app.
+  const showInstall = !isStandalone() && (installable || isIos());
+
+  const handleInstall = async () => {
+    setIsOpen(false);
+    if (isIos()) {
+      alert('To install: tap the Share button, then "Add to Home Screen".');
+      return;
+    }
+    const ok = await triggerInstall();
+    if (!ok) alert('Install is not available right now. Try again in a moment, or use your browser menu > Install app.');
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -136,8 +154,17 @@ function AccountMenu() {
             <Upload className="w-4 h-4" /> Import Data
           </button>
           
+          {showInstall && (
+            <button
+              onClick={handleInstall}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+            >
+              <Smartphone className="w-4 h-4" /> Install app
+            </button>
+          )}
+
           <div className="border-t border-gray-200 mt-1 pt-1">
-            <button 
+            <button
               onClick={handleLogout}
               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
             >

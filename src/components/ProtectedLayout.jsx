@@ -1,5 +1,6 @@
 import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import BottomTabBar from './BottomTabBar';
+import BackGuard from './BackGuard';
 import { supabase } from '../supabaseClient';
 import { useEffect, useState } from 'react';
 
@@ -27,12 +28,13 @@ export default function ProtectedLayout() {
   if (!session) return <Navigate to="/login" replace />;
 
   return (
-    <div className="min-h-screen bg-cream pb-20 flex flex-col items-center">
+    <div className="min-h-screen bg-cream flex flex-col items-center">
       <div className="w-full max-w-md bg-cream min-h-screen relative shadow-sm">
-        <main key={location.pathname} className="motion-safe:animate-fade-in">
+        <main key={location.pathname} className="pb-20 motion-safe:animate-fade-in">
           <Outlet context={{ session }} />
         </main>
       </div>
+      <BackGuard />
       <BottomTabBar />
     </div>
   );

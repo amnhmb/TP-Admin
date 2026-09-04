@@ -55,8 +55,9 @@
   }
 }
 
-html {
+html, body {
   touch-action: manipulation; /* kill double-tap zoom */
+  overscroll-behavior: none; /* no rubber-band / bounce past content */
 }
 
 * {
