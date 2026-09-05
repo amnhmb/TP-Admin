@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import PageHeader from '../components/PageHeader';
 import { User, Trash2 } from 'lucide-react';
+import { formatMyPhone } from '../utils/phone';
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
+  const [orderCounts, setOrderCounts] = useState({});
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState(null);
@@ -16,6 +18,22 @@ export default function Customers() {
         .from('customers')
         .select('*')
         .order('name');
+
+      const { data: bData } = await supabase
+        .from('bookings')
+        .select('customers(whatsapp)');
+
+      if (bData) {
+        const counts = {};
+        bData.forEach(b => {
+          const wa = b.customers?.whatsapp;
+          if (wa) {
+            counts[wa] = (counts[wa] || 0) + 1;
+          }
+        });
+        setOrderCounts(counts);
+      }
+
       if (!error && data) {
         setCustomers(data);
       }
@@ -76,8 +94,15 @@ export default function Customers() {
                   <User className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{customer.name}</h3>
-                  <p className="text-sm text-gray-500 font-mono">{customer.whatsapp}</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-gray-900">{customer.name}</h3>
+                    {customer.whatsapp && (
+                      <span className="text-xs bg-cream text-forest px-2 py-0.5 rounded-full font-medium border border-forest/10">
+                        {orderCounts[customer.whatsapp] || 0} order
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-500 font-mono mt-0.5">{formatMyPhone(customer.whatsapp)}</p>
                 </div>
                 <button onClick={() => handleDelete(customer)} className="ml-auto p-2 text-gray-400 hover:text-red-500 transition-all duration-200 active:scale-95">
                   <Trash2 className="w-4 h-4" />

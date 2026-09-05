@@ -5,6 +5,8 @@ import { X, Plus, AlertCircle } from 'lucide-react';
 
 const STATUSES = ['reserved', 'confirmed', 'out', 'returned', 'cancelled'];
 
+import { getCanonicalPhone, formatMyPhone } from '../utils/phone';
+
 export default function BookingFormModal({ onClose, bookingToEdit, onSaveSuccess }) {
   const [items, setItems] = useState([]);
   const [packages, setPackages] = useState([]);
@@ -51,7 +53,7 @@ export default function BookingFormModal({ onClose, bookingToEdit, onSaveSuccess
           const cust = Array.isArray(bData.customers) ? bData.customers[0] : bData.customers;
           setBookingNo(bData.booking_no || '');
           setName(cust?.name || '');
-          setWhatsapp(cust?.whatsapp || '');
+          setWhatsapp(formatMyPhone(cust?.whatsapp || ''));
           setRentalDate(bData.rental_date);
           setReturnDate(bData.return_date);
           setPackageId(bData.package_id || '');
@@ -89,6 +91,15 @@ export default function BookingFormModal({ onClose, bookingToEdit, onSaveSuccess
     }
     loadData();
   }, [bookingToEdit]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (whatsapp && whatsapp !== formatMyPhone(whatsapp)) {
+        setWhatsapp(formatMyPhone(whatsapp));
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [whatsapp]);
 
   // Aggregate total requested quantities per item
   const requestedQuantities = {};
@@ -162,7 +173,7 @@ export default function BookingFormModal({ onClose, bookingToEdit, onSaveSuccess
 
     const payload = {
       p_customer_name: name,
-      p_customer_whatsapp: whatsapp,
+      p_customer_whatsapp: getCanonicalPhone(whatsapp),
       p_rental_date: rentalDate,
       p_return_date: returnDate,
       p_fulfillment: fulfillment,
@@ -242,7 +253,7 @@ export default function BookingFormModal({ onClose, bookingToEdit, onSaveSuccess
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-                  <input type="text" required value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="e.g. 60123456789" className="w-full border border-gray-300 rounded-lg p-2 focus:ring-forest focus:border-forest outline-none transition-colors" />
+                  <input type="text" required value={whatsapp} onChange={e => setWhatsapp(e.target.value)} onBlur={() => setWhatsapp(formatMyPhone(whatsapp))} placeholder="e.g. +60 12-345 6789" className="w-full border border-gray-300 rounded-lg p-2 focus:ring-forest focus:border-forest outline-none transition-colors" />
                 </div>
               </div>
 

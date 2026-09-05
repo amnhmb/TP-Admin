@@ -144,14 +144,14 @@ function AccountMenu() {
             onClick={handleExport}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
           >
-            <Download className="w-4 h-4" /> Export Data
+            <Upload className="w-4 h-4" /> Export Data
           </button>
           
           <button 
             onClick={handleImportClick}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
           >
-            <Upload className="w-4 h-4" /> Import Data
+            <Download className="w-4 h-4" /> Import Data
           </button>
           
           {showInstall && (

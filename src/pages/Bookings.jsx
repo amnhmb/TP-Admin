@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient';
 import PageHeader from '../components/PageHeader';
 import BookingFormModal from '../components/BookingFormModal';
 import { Search, Edit2, Trash2 } from 'lucide-react';
+import { formatMyPhone } from '../utils/phone';
 
 const STATUSES = ['all', 'reserved', 'confirmed', 'out', 'returned', 'cancelled'];
 
@@ -129,6 +130,9 @@ export default function Bookings() {
                   <div>
                     <h3 className="font-bold text-gray-900">{b.booking_no}</h3>
                     <p className="text-sm font-medium text-gray-800">{b.customers.name}</p>
+                    {b.customers?.whatsapp && (
+                      <p className="text-sm text-gray-500 font-mono">{formatMyPhone(b.customers.whatsapp)}</p>
+                    )}
                   </div>
                   <div className="flex -mr-2">
                     <button onClick={() => openEdit(b)} className="p-2 text-gray-400 hover:text-forest transition-all active:scale-95">
